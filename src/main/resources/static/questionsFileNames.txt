@@ -1,0 +1,7 @@
+// add txt file with question in "src/main/resources/static/questions"
+// below add only file names with extension
+// every line in file is another question
+
+ice_break.txt
+future.txt
+music.txt

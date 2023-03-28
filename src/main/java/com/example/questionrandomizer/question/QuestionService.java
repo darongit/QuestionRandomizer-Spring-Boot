@@ -3,7 +3,9 @@ package com.example.questionrandomizer.question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class QuestionService {
@@ -18,6 +20,10 @@ public class QuestionService {
         result.append("<html><body>");
 
         result.append("/api/v1/question/all -> return list of all questions");
+        result.append("<br>");
+        result.append("/api/v1/question/category -> return list of all categories");
+        result.append("<br>");
+        result.append("/api/v1/question/category/{category} -> return list of all questions from given category");
         result.append("<br>");
         result.append("/api/v1/question/{id} -> show question by id");
         result.append("<br>");
@@ -105,5 +111,17 @@ public class QuestionService {
                 questionRepository.save(question);
             }
         }
+    }
+
+    public Set<String> getAllCategories() {
+        Set<String> result = new HashSet<>();
+        questionRepository.findAll().forEach(question -> result.add(question.getCategory()));
+        return result;
+    }
+
+    public List<Question> getAllQuestionsFromCategory(String category) {
+        return questionRepository.findAll().stream()
+                .filter(question -> question.getCategory().equals(category))
+                .toList();
     }
 }

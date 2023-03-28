@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -62,5 +63,14 @@ public class QuestionController {
     @GetMapping("/question/reset/{category}")
     public void resetQuestionsByCategory(@PathVariable String category) {
         questionService.resetQuestionsByCategory(category.toLowerCase());
+    }
+    @GetMapping("/question/category")
+    public Set<String> getAllCategories() {
+        return questionService.getAllCategories();
+    }
+
+    @GetMapping("/question/category/{category}")
+    public List<Question> getAllQuestionsFromCategory(@PathVariable String category) {
+        return questionService.getAllQuestionsFromCategory(category.toUpperCase());
     }
 }
