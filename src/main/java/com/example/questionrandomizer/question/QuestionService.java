@@ -3,6 +3,7 @@ package com.example.questionrandomizer.question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,18 +75,27 @@ public class QuestionService {
 
     public Question getRandomQuestionByCategory(String category) {
         List<Question> toDraw = null;
+        String categoryFromUrl = category.toUpperCase()
+                .replace("+", " ")
+                .replace("_", " ");
 
-        if (category.equals("")) {
+        if (category.equals("") || categoryFromUrl.equals("ALL CATEGORIES")) {
             toDraw = questionRepository.findAll().stream()
                     .filter(question -> !question.isAlreadySeen())
                     .toList();
-            if (toDraw.isEmpty()) { throw new IllegalStateException("No available questions"); }
+            if (toDraw.isEmpty()) {
+                resetQuestions();
+                return getRandomQuestionByCategory(categoryFromUrl);
+            }
         } else {
             toDraw = questionRepository.findAll().stream()
-                    .filter(question -> question.getCategory().toLowerCase().equals(category))
+                    .filter(question -> question.getCategory().equals(categoryFromUrl))
                     .filter(question -> !question.isAlreadySeen())
                     .toList();
-            if (toDraw.isEmpty()) { throw new IllegalArgumentException("No available questions or wrong category"); }
+            if (toDraw.isEmpty()) {
+                resetQuestionsByCategory(categoryFromUrl);
+                return getRandomQuestionByCategory(categoryFromUrl);
+            }
         }
         Question result = toDraw.get((int)(Math.random()*toDraw.size()));
         result.setAlreadySeen(true);
@@ -98,18 +108,20 @@ public class QuestionService {
     }
 
     public void resetQuestionsByCategory(String category) {
+        String categoryFromUrl = category.toUpperCase()
+                .replace("+", " ")
+                .replace("_", " ");
+        List<Question> toChange = new ArrayList<>();
         if (category.equals("")) {
-            for (Question question: questionRepository.findAll()) {
-                question.setAlreadySeen(false);
-                questionRepository.save(question);
-            }
+            toChange = questionRepository.findAll();
         } else {
-            for (Question question: questionRepository.findAll().stream()
-                    .filter(question -> question.getCategory().toLowerCase().equals(category))
-                    .toList()) {
-                question.setAlreadySeen(false);
-                questionRepository.save(question);
-            }
+            toChange = questionRepository.findAll().stream()
+                    .filter(question -> question.getCategory().equals(categoryFromUrl))
+                    .toList();
+        }
+        for (Question question: toChange) {
+            question.setAlreadySeen(false);
+            questionRepository.save(question);
         }
     }
 
@@ -120,8 +132,9 @@ public class QuestionService {
     }
 
     public List<Question> getAllQuestionsFromCategory(String category) {
+        String categoryFromUrl = category.replace("+", " ").replace("_", " ");
         return questionRepository.findAll().stream()
-                .filter(question -> question.getCategory().equals(category))
+                .filter(question -> question.getCategory().equals(categoryFromUrl))
                 .toList();
     }
 }

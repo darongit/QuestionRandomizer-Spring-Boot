@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>QuestionRandomizer</title>
+    <link th:href="@{/css/default.css}" rel="stylesheet">
+    <link th:href="@{/css/button.css}" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/js/default.js}"></script>
 </head>
 <body>
-
+    <div class="head-div">
+        <h1>Question Randomizer</h1>
+        <h2>Choose you category</h2>
+    </div>
+    <div class="body-div" th:each="category : ${categories}">
+        <br>
+        <form th:action="${category.getUrlPath()}">
+            <em><button class="question-button" type="submit" th:text="${category.getName()}"></button></em>
+        </form>
+        <br>
+    </div>
 </body>
 </html>

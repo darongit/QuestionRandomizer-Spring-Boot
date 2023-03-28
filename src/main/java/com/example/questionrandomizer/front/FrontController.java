@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class FrontController {
@@ -16,6 +17,15 @@ public class FrontController {
     @GetMapping("/")
     public String mainPage(Model model) {
         return frontService.mainPage(model);
+    }
+
+    public String settingsPage(Model model) {
+        return frontService.settingsPage(model);
+    }
+
+    @GetMapping("/{category}")
+    public String randomQuestionPageByCategory(Model model, @PathVariable String category) {
+        return frontService.randomQuestionPageByCategory(model, category);
     }
 
 }
