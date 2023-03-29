@@ -83,7 +83,7 @@ public class QuestionService {
             toDraw = questionRepository.findAll().stream()
                     .filter(question -> !question.isAlreadySeen())
                     .toList();
-            if (toDraw.isEmpty()) {
+            if (toDraw.isEmpty() && getAllCategories().contains(categoryFromUrl)) {
                 resetQuestions();
                 return getRandomQuestionByCategory(categoryFromUrl);
             }
@@ -92,12 +92,18 @@ public class QuestionService {
                     .filter(question -> question.getCategory().equals(categoryFromUrl))
                     .filter(question -> !question.isAlreadySeen())
                     .toList();
-            if (toDraw.isEmpty()) {
-                resetQuestionsByCategory(categoryFromUrl);
-                return getRandomQuestionByCategory(categoryFromUrl);
+            if (toDraw.isEmpty() && getAllCategories().contains(categoryFromUrl)) {
+                resetQuestionsByCategory(category);
+                return getRandomQuestionByCategory(category);
             }
         }
-        Question result = toDraw.get((int)(Math.random()*toDraw.size()));
+
+        int idx = (int)(Math.random()*toDraw.size());
+        if (toDraw.size() == 0) {
+            System.out.println(category);
+        }
+        Question result = result = toDraw.get(idx);
+
         result.setAlreadySeen(true);
         questionRepository.save(result);
         return result;
@@ -112,7 +118,7 @@ public class QuestionService {
                 .replace("+", " ")
                 .replace("_", " ");
         List<Question> toChange = new ArrayList<>();
-        if (category.equals("")) {
+        if (category.equals("") || categoryFromUrl.equals("ALL CATEGORIES")) {
             toChange = questionRepository.findAll();
         } else {
             toChange = questionRepository.findAll().stream()

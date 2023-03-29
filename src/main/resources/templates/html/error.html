@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/imgs/favicon.png}"/>
+    <link th:href="@{/css/default.css}" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/js/default.js}"></script>
+</head>
+<body>
+    <div class="head-div">
+        <h2 th:text="${error.getCategory()}"></h2>
+        <h1 th:text="${error.getContent()}"></h1>
+        <form action="/">
+            <button type="submit">Back to main page</button>
+        </form>
+        <br>
+    </div>>
+</body>
+</html>

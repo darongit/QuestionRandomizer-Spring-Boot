@@ -1,10 +1,10 @@
 package com.example.questionrandomizer.front;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 public class Category {
     private String name;
     private String urlPath;
@@ -17,4 +17,9 @@ public class Category {
         result.urlPath = "/all+categories";
         return result;
     }
+
+    public String getToReset() {
+        return String.format("/settings/reset/%s", name.toLowerCase().replace(" ", "+"));
+    }
+
 }

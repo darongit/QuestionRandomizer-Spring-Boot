@@ -19,13 +19,17 @@ public class FrontController {
         return frontService.mainPage(model);
     }
 
+    @GetMapping("/settings/reset")
     public String settingsPage(Model model) {
-        return frontService.settingsPage(model);
+        return frontService.resetPage(model, "");
+    }
+    @GetMapping("/settings/reset/{category}")
+    public String settingsPage(Model model, @PathVariable String category) {
+        return frontService.resetPage(model, category);
     }
 
     @GetMapping("/{category}")
     public String randomQuestionPageByCategory(Model model, @PathVariable String category) {
         return frontService.randomQuestionPageByCategory(model, category);
     }
-
 }

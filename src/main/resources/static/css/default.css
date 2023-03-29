@@ -1,11 +1,13 @@
 html {
-    background-image: linear-gradient(120deg, #010240, #A800A6, #010240);
+    background-image: linear-gradient(#010240, #A800A6, #010240);
+    background-size: 300% 300%;
     font-family: Arial, Helvetica, sans-serif;
     font-size: larger;
 }
 
 div {
     background-image: linear-gradient(270deg, #212F3D, #4A235A, #212F3D);
+    background-size: 200% 200%;
     width: 75%;
     border: 2px solid violet;
     border-style: inset;
@@ -18,9 +20,11 @@ div {
 }
 
 .head-div {
-    font-family: 'Brush Script MT', cursive;
+    font-family: Verdana, sans-serif;
     font-size: larger;
+    text-shadow: 2px 2px red;
     background-image: linear-gradient(270deg, #212F3D, #4A235A, purple);
+    background-size: 200% 200%;
     margin-bottom: 3%;
     color: #F39C12;
 }

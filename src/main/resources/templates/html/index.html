@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>QuestionRandomizer</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/imgs/favicon.png}"/>
     <link th:href="@{/css/default.css}" rel="stylesheet">
-    <link th:href="@{/css/button.css}" rel="stylesheet">
     <script type="text/javascript" th:src="@{/js/default.js}"></script>
 </head>
 <body>
     <div class="head-div">
         <h1>Question Randomizer</h1>
-        <h2>Choose you category</h2>
+        <h2>Choose your category</h2>
     </div>
     <div class="body-div" th:each="category : ${categories}">
         <br>
@@ -19,5 +19,12 @@
         </form>
         <br>
     </div>
+<br>
+<div style="color: red;">
+    <h3>Settings</h3>
+    <form action="/settings/reset">
+        <button type="submit">Reset</button>
+    </form>
+</div>
 </body>
 </html>
