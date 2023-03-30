@@ -28,10 +28,7 @@ public class FrontService {
         List<Category> categories = new ArrayList<>();
         categories.add(new Category("ALL CATEGORIES"));
         questionService.getAllCategories().forEach(category1 -> categories.add(new Category(category1)));
-        if (category.strip().isBlank()) {
-            System.out.println("Nothing");
-            System.out.println(category);
-        } else {
+        if (!category.strip().isBlank()) {
             questionService.resetQuestionsByCategory(category);
         }
         model.addAttribute("categories", categories);

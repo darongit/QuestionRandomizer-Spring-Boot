@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -17,131 +16,48 @@ public class QuestionConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        addQuestionsFromFiles2();
-        addQuestionsFromFiles();
-//        addQuestionsFromClass();
+        addQuestions();
     }
+    public void addQuestions() {
+        // create list of questions questionsFiles to 'questionsFiles' array
+        List<File> questionsFiles = new ArrayList<>();
+        URL url = Thread.currentThread().getContextClassLoader().getResource("static/questions");
+        String path = null;
+        try {
+            assert url != null;
+            path = url.getPath();
+        } catch (NullPointerException e) {
+            throw new RuntimeException(String.format("%s file is not found", url.getPath()));
+        }
+        for (File file : new File(path).listFiles()) {
+            if (!file.isDirectory() && file.getName().toLowerCase().endsWith(".txt")) {
+                questionsFiles.add(file);
+            }
+        }
 
-    private void addQuestionsFromFiles2() {
-        URL fileNamesPath = QuestionConfig.class.getClassLoader().getResource("static/questionsFileNames.txt");
-        String tmp = null;
-        String tmpCategory = null;
-        File file = null;
+        // load questions from questionsFiles
         Scanner scanner = null;
-        List<String> filePaths = new ArrayList<>();
-
-        try {
-            file = new File(fileNamesPath.toURI());
-        } catch (URISyntaxException e) {
-            file = new File(fileNamesPath.getPath());
-        }
-
-        try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(String.format("Problem with %s", file.getAbsolutePath()));
-        }
-
-        while (scanner.hasNextLine()) {
-            tmp = scanner.nextLine().strip();
-            if (tmp.isBlank() || tmp.startsWith("//")) {
-                continue;
-            }
-            filePaths.add(String.format("static/questions/%s", tmp));
-            System.out.println(filePaths.get(filePaths.size() - 1));
-        }
-
-        for (String path: filePaths) {
-            try {
-                file = new File(QuestionConfig.class.getClassLoader().getResource(path).toURI());
-                scanner = new Scanner(file);
-            } catch (URISyntaxException | FileNotFoundException e) {
-                throw new RuntimeException(String.format("Problem with %s", path));
-            }
-            // take back file name to create category name
-            tmpCategory = path.split("/")[path.split("/").length-1]
+        String tmp;
+        String category;
+        for (File file : questionsFiles) {
+            category = file.getName()
                     .toUpperCase()
                     .replace(".TXT", "")
-                    .strip()
                     .replace("_", " ")
                     .replace("+", " ");
-
-            while (scanner.hasNextLine()) {
-                tmp = scanner.nextLine().strip();
-                if (tmp.isBlank() || tmp.startsWith("\\")) {
-                    continue;
-                }
-                questionRepository.save(new Question(tmpCategory, tmp));
-            }
-        }
-    }
-
-    private void addQuestionsFromFiles() {
-        URL fileNamesPath = QuestionConfig.class.getClassLoader().getResource("static/questionsFileNames.txt");
-        String tmp = null;
-        String tmpCategory = null;
-        File file = null;
-        Scanner scanner = null;
-        List<String> filePaths = new ArrayList<>();
-
-        try {
-            file = new File(fileNamesPath.toURI());
-        } catch (URISyntaxException e) {
-            file = new File(fileNamesPath.getPath());
-        }
-
-        try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(String.format("Problem with %s", file.getAbsolutePath()));
-        }
-
-        while (scanner.hasNextLine()) {
-            tmp = scanner.nextLine().strip();
-            if (tmp.isBlank() || tmp.startsWith("//")) {
-                continue;
-            }
-            filePaths.add(String.format("static/questions/%s", tmp));
-            System.out.println(filePaths.get(filePaths.size() - 1));
-        }
-
-        for (String path: filePaths) {
             try {
-                file = new File(QuestionConfig.class.getClassLoader().getResource(path).toURI());
                 scanner = new Scanner(file);
-            } catch (URISyntaxException | FileNotFoundException e) {
-                throw new RuntimeException(String.format("Problem with %s", path));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(String.format("%s file can't be find", file.getAbsolutePath()));
             }
-            // take back file name to create category name
-            tmpCategory = path.split("/")[path.split("/").length-1]
-                    .toUpperCase()
-                    .replace(".TXT", "")
-                    .strip()
-                    .replace("_", " ")
-                    .replace("+", " ");
-
             while (scanner.hasNextLine()) {
                 tmp = scanner.nextLine().strip();
-                if (tmp.isBlank() || tmp.startsWith("\\")) {
+                if (tmp.isBlank() || tmp.startsWith("//")) {
                     continue;
                 }
-                questionRepository.save(new Question(tmpCategory, tmp));
+                questionRepository.save(new Question(category, tmp));
             }
         }
-    }
-    public void addQuestionsFromClass() {
-        Map<String, String> map = new HashMap<>();
-        map.put("FUTURE", QuestionFilesToString.future());
-        map.put("MUSIC", QuestionFilesToString.music());
-        map.put("ICE BREAK", QuestionFilesToString.ice_break());
 
-        for (String category: map.keySet()) {
-            for (String content: map.get(category).split("\n")) {
-                if (content.isBlank()) {
-                    continue;
-                }
-                questionRepository.save(new Question(category, content.strip()));
-            }
-        }
     }
 }
